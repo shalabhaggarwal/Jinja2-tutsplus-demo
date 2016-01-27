@@ -1,4 +1,5 @@
-from flask import Flask, render_template, abort
+import ccy
+from flask import Flask, render_template, abort, request
 
 app = Flask(__name__)
 
@@ -42,3 +43,12 @@ def some_processor():
     def full_name(product):
         return '{0} / {1}'.format(product['category'], product['name'])
     return {'full_name': full_name}
+
+@app.template_filter('full_name')
+def full_name_filter(product):
+    return '{0} / {1}'.format(product['category'], product['name'])
+
+@app.template_filter('format_currency')
+def format_currency_filter(amount):
+    currency_code = ccy.countryccy(request.accept_languages.best[-2:])
+    return '{0} {1}'.format(currency_code, amount)
